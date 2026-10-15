@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: salary-management
+
+  datasource:
+    url: jdbc:sqlite:salary.db
+    driver-class-name: org.sqlite.JDBC
+    hikari:
+      # SQLite allows one writer at a time; one connection avoids "database is locked" errors
+      maximum-pool-size: 1
+
+  jpa:
+    database-platform: org.hibernate.community.dialect.SQLiteDialect
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
