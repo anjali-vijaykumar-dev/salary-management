@@ -13,5 +13,6 @@ public record EmployeeRequest(
         @NotBlank String country,
         @NotBlank @Size(min = 3, max = 3) String currency,
         @NotNull @Positive BigDecimal salary,
-        @NotNull @PastOrPresent LocalDate hireDate) {
+        @NotNull @PastOrPresent LocalDate hireDate,
+        @Size(max = 255) String salaryChangeReason) {
 }

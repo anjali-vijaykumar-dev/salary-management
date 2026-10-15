@@ -118,6 +118,6 @@ class EmployeeServiceTest {
     private EmployeeRequest request(String name, String email, String country, String jobTitle, String salary) {
         String currency = country.equals("India") ? "INR" : "SGD";
         return new EmployeeRequest(name, email, jobTitle, "Engineering", country, currency,
-                new BigDecimal(salary), LocalDate.of(2022, 1, 10));
+                new BigDecimal(salary), LocalDate.of(2022, 1, 10), null);
     }
 }
