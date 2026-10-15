@@ -2,6 +2,7 @@ package com.acme.salary_management.common;
 
 import com.acme.salary_management.employee.DuplicateEmailException;
 import com.acme.salary_management.employee.EmployeeNotFoundException;
+import com.acme.salary_management.insights.CountryNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -40,5 +41,11 @@ public class GlobalExceptionHandler {
         ex.getBindingResult().getFieldErrors()
                 .forEach(error -> fieldErrors.putIfAbsent(error.getField(), error.getDefaultMessage()));
         return new ApiError(400, "Validation failed", fieldErrors);
+    }
+
+    @ExceptionHandler(CountryNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiError handleCountryNotFound(CountryNotFoundException ex) {
+        return ApiError.of(404, ex.getMessage());
     }
 }
