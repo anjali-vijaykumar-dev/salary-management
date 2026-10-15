@@ -56,6 +56,17 @@ public class Employee {
         this.hireDate = hireDate;
     }
 
+    public void update(String fullName, String email, String jobTitle, String department,
+                       String country, String currency, BigDecimal salary, LocalDate hireDate) {
+        this.fullName = fullName;
+        this.email = email;
+        this.jobTitle = jobTitle;
+        this.department = department;
+        this.country = country;
+        this.currency = currency;
+        this.salary = salary;
+        this.hireDate = hireDate;
+    }
     public Long getId() { return id; }
     public String getFullName() { return fullName; }
     public String getEmail() { return email; }
