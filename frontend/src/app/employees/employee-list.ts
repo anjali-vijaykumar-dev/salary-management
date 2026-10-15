@@ -1,6 +1,6 @@
 import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { CurrencyPipe, DatePipe } from '@angular/common';
+import { CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSortModule, Sort } from '@angular/material/sort';
@@ -21,7 +21,7 @@ import { SalaryHistoryDialog } from './salary-history-dialog';
 @Component({
   selector: 'app-employee-list',
   imports: [
-    CurrencyPipe, DatePipe, MatTableModule, MatPaginatorModule, MatSortModule, MatFormFieldModule,
+    CurrencyPipe, DatePipe, DecimalPipe, MatTableModule, MatPaginatorModule, MatSortModule, MatFormFieldModule,
     MatInputModule, MatSelectModule, MatButtonModule, MatProgressBarModule,
   ],
   templateUrl: './employee-list.html',

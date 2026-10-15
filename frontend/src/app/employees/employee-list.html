@@ -2,7 +2,7 @@
   <header class="page-header">
     <div>
       <h1>Employees</h1>
-      <p class="subtitle">{{ total() }} employees</p>
+      <p class="subtitle">{{ total() | number }} employees</p>
     </div>
     <button mat-flat-button (click)="openCreate()">Add employee</button>
   </header>
