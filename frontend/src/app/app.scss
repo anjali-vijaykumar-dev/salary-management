@@ -1,0 +1,12 @@
+.app-toolbar {
+  gap: 24px;
+}
+
+.brand {
+  font-weight: 600;
+}
+
+nav a.active {
+  text-decoration: underline;
+  text-underline-offset: 6px;
+}

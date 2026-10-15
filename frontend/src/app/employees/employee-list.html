@@ -1,0 +1,96 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <h1>Employees</h1>
+      <p class="subtitle">{{ total() }} employees</p>
+    </div>
+    <button mat-flat-button (click)="openCreate()">Add employee</button>
+  </header>
+
+  <div class="filters">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Search by name</mat-label>
+      <input matInput [value]="query().name" (input)="onNameInput($any($event.target).value)" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Country</mat-label>
+      <mat-select [value]="query().country" (selectionChange)="onCountryChange($event.value)">
+        <mat-option value="">All countries</mat-option>
+        @for (c of countries(); track c.country) {
+          <mat-option [value]="c.country">{{ c.country }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Job title</mat-label>
+      <mat-select [value]="query().jobTitle" (selectionChange)="onJobTitleChange($event.value)">
+        <mat-option value="">All job titles</mat-option>
+        @for (title of jobTitles(); track title) {
+          <mat-option [value]="title">{{ title }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-button (click)="clearFilters()">Clear filters</button>
+  </div>
+
+  @if (loading()) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  <div class="table-wrapper">
+    <table mat-table [dataSource]="employees()" matSort matSortActive="fullName" matSortDirection="asc"
+           (matSortChange)="onSort($event)">
+
+      <ng-container matColumnDef="fullName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+        <td mat-cell *matCellDef="let e">{{ e.fullName }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef>Email</th>
+        <td mat-cell *matCellDef="let e">{{ e.email }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="jobTitle">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Job title</th>
+        <td mat-cell *matCellDef="let e">{{ e.jobTitle }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="country">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Country</th>
+        <td mat-cell *matCellDef="let e">{{ e.country }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="salary">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Salary</th>
+        <td mat-cell *matCellDef="let e" class="num">{{ e.salary | currency: e.currency : 'symbol' : '1.0-0' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="hireDate">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Hire date</th>
+        <td mat-cell *matCellDef="let e">{{ e.hireDate | date: 'mediumDate' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let e" class="actions">
+          <button mat-button (click)="openHistory(e)">History</button>
+          <button mat-button (click)="openEdit(e)">Edit</button>
+          <button mat-button (click)="delete(e)">Delete</button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columns"></tr>
+      <tr mat-row *matRowDef="let row; columns: columns"></tr>
+      <tr class="mat-mdc-row" *matNoDataRow>
+        <td class="mat-mdc-cell empty" [attr.colspan]="columns.length">No employees match these filters.</td>
+      </tr>
+    </table>
+  </div>
+
+  <mat-paginator [length]="total()" [pageIndex]="query().page" [pageSize]="query().size"
+                 [pageSizeOptions]="[10, 20, 50, 100]" (page)="onPage($event)" showFirstLastButtons />
+</section>

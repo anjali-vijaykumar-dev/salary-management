@@ -1,0 +1,74 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <h1>Salary insights</h1>
+      <p class="subtitle">
+        {{ totalHeadcount() | number }} employees across {{ countries().length }} countries ·
+        salaries shown in each country's local currency
+      </p>
+    </div>
+  </header>
+
+  <h2>By country</h2>
+  <p class="hint">Select a country to see pay by job title.</p>
+
+  <div class="table-wrapper">
+    <table mat-table [dataSource]="countries()" class="clickable">
+      <ng-container matColumnDef="country">
+        <th mat-header-cell *matHeaderCellDef>Country</th>
+        <td mat-cell *matCellDef="let c">{{ c.country }}</td>
+      </ng-container>
+      <ng-container matColumnDef="headcount">
+        <th mat-header-cell *matHeaderCellDef class="num">Headcount</th>
+        <td mat-cell *matCellDef="let c" class="num">{{ c.headcount | number }}</td>
+      </ng-container>
+      <ng-container matColumnDef="minSalary">
+        <th mat-header-cell *matHeaderCellDef class="num">Min</th>
+        <td mat-cell *matCellDef="let c" class="num">{{ c.minSalary | currency: c.currency : 'symbol' : '1.0-0' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="averageSalary">
+        <th mat-header-cell *matHeaderCellDef class="num">Average</th>
+        <td mat-cell *matCellDef="let c" class="num">{{ c.averageSalary | currency: c.currency : 'symbol' : '1.0-0' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="maxSalary">
+        <th mat-header-cell *matHeaderCellDef class="num">Max</th>
+        <td mat-cell *matCellDef="let c" class="num">{{ c.maxSalary | currency: c.currency : 'symbol' : '1.0-0' }}</td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="countryColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: countryColumns" (click)="selectCountry(row.country)"
+          [class.selected]="row.country === selected()?.summary?.country"></tr>
+    </table>
+  </div>
+
+  @if (selected(); as s) {
+    <h2>{{ s.summary.country }} by job title</h2>
+    <p class="hint">Highest average salary first · {{ s.summary.currency }}</p>
+
+    <div class="table-wrapper">
+      <table mat-table [dataSource]="s.byJobTitle">
+        <ng-container matColumnDef="jobTitle">
+          <th mat-header-cell *matHeaderCellDef>Job title</th>
+          <td mat-cell *matCellDef="let j">{{ j.jobTitle }}</td>
+        </ng-container>
+        <ng-container matColumnDef="headcount">
+          <th mat-header-cell *matHeaderCellDef class="num">Headcount</th>
+          <td mat-cell *matCellDef="let j" class="num">{{ j.headcount | number }}</td>
+        </ng-container>
+        <ng-container matColumnDef="minSalary">
+          <th mat-header-cell *matHeaderCellDef class="num">Min</th>
+          <td mat-cell *matCellDef="let j" class="num">{{ j.minSalary | currency: s.summary.currency : 'symbol' : '1.0-0' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="averageSalary">
+          <th mat-header-cell *matHeaderCellDef class="num">Average</th>
+          <td mat-cell *matCellDef="let j" class="num">{{ j.averageSalary | currency: s.summary.currency : 'symbol' : '1.0-0' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="maxSalary">
+          <th mat-header-cell *matHeaderCellDef class="num">Max</th>
+          <td mat-cell *matCellDef="let j" class="num">{{ j.maxSalary | currency: s.summary.currency : 'symbol' : '1.0-0' }}</td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="jobColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: jobColumns"></tr>
+      </table>
+    </div>
+  }
+</section>
