@@ -53,7 +53,6 @@ public class SecurityConfig {
                         .requestMatchers("/api/**").hasRole(MANAGER)
                         .anyRequest().authenticated())
                 .formLogin(form -> form.defaultSuccessUrl("/", true).permitAll())
-                .logout(logout -> logout.logoutSuccessUrl("/login?logout"))
                 .csrf(csrf -> csrf
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                         .csrfTokenRequestHandler(new SpaCsrfTokenRequestHandler()))
