@@ -7,9 +7,11 @@ A **modular monolith**: one Spring Boot application, organised by feature module
 ```mermaid
 flowchart LR
     HR[HR Manager<br/>browser] --> UI[Angular UI]
-    UI -->|REST / JSON| API
+    HR -. Sign in with Google .-> G[Google<br/>OIDC]
+    UI -->|REST / JSON + session cookie| SEC
 
     subgraph App[Spring Boot application]
+        SEC[Spring Security<br/>login, roles, CSRF] --> API
         API[Controllers] --> EMP[employee]
         API --> INS[insights]
         API --> HIST[salaryhistory]
@@ -32,6 +34,8 @@ flowchart LR
 | `salaryhistory` | Listens for `SalaryChangedEvent`, stores salary revisions, serves an employee's salary history. |
 | `seed` | Generates 10,000 realistic employees and loads them on startup when the database is empty. |
 | `common` | Cross-cutting pieces: `PageResponse`, `ApiError`, global exception handler. |
+| `security` | Login (Google SSO + demo accounts), role mapping from email allowlist, URL rules, CSRF for the SPA. |
+| `web` | `/api/me` (current user and roles) and forwarding Angular routes to `index.html`. |
 
 Each module has its own controller, service and repository. Modules talk through services or events, never by reaching into each other's tables.
 
@@ -84,6 +88,9 @@ erDiagram
 | GET | `/api/insights/countries` | Headcount, min / max / avg salary per country | 200 | – |
 | GET | `/api/insights/countries/{country}` | Country summary + breakdown by job title | 200 | 404 |
 | GET | `/api/insights/job-titles` | Distinct job titles (for UI filters) | 200 | – |
+| GET | `/api/me` | Signed-in user and roles | 200 | 401 |
+
+**Access rules:** every `/api` call needs a signed-in user (otherwise **401**). `GET` needs HR Manager or HR Viewer; `POST` / `PUT` / `DELETE` need HR Manager and a valid CSRF token (otherwise **403**).
 
 Every error returns the same shape:
 ```json
@@ -104,6 +111,9 @@ Every error returns the same shape:
 | **Page size capped at 100, sort-field whitelist** | Protects the API from "give me all 10k rows" and from errors on unknown fields. | Clients must page through results. |
 | **`ddl-auto: update`** | Fast iteration for a prototype. | Production would use versioned migrations (Flyway). |
 | **Fixed random seed for demo data** | Same 10,000 employees on every fresh start – reproducible demos and tests. | Not random across runs – intended. |
+| **Google SSO + demo accounts, roles from an email allowlist** | Deployed on a public URL, salary data needed protection. SSO is the production pattern; demo accounts guarantee reviewers can sign in. Google is switched on only when its keys are configured. | Allowlist and in-memory demo users are demo-grade; production would use the company identity provider and directory groups. |
+| **Session cookie + CSRF token (not JWT)** | UI and API share one origin, so a server session is the simplest secure option; Angular sends the `XSRF-TOKEN` cookie back as a header automatically. | Sessions live in memory, so multiple instances would need a shared session store (e.g. Spring Session + Redis). |
+| **Hide actions in the UI, enforce on the server** | The UI hides Add / Edit / Delete for viewers for a clean experience, but the server rules are what actually protect the data. | Two places to keep in sync – covered by server-side tests. |
 
 ## Testing strategy
 
@@ -113,6 +123,7 @@ Every error returns the same shape:
 | Services | `@DataJpaTest` with in-memory SQLite | Real queries: filters, paging, duplicate emails, aggregation maths, salary history |
 | Controllers | `@WebMvcTest` with mocked service | URLs, status codes, validation errors, JSON shape |
 | Performance | `@DataJpaTest` with 10,000 employees | Insight queries stay under 500 ms (fails the build otherwise) |
+| Security | `@WebMvcTest` with the real security rules | 401 when signed out, 403 for viewers changing data or missing CSRF token, role mapping from Google email |
 
 Built test-first: each feature has a `test:` commit followed by a `feat:` commit in the history.
 

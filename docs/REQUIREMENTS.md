@@ -29,6 +29,13 @@ Replace ACME's Excel-based salary tracking with a web app that lets the HR Manag
    - HR can view the full salary history of an employee
 5. **Seed data** – script that loads 10,000 realistic employees across multiple countries and job titles
 6. **Performance-tested analytics** – automated test that runs the insight queries against 10,000 employees and asserts they stay under the response-time target; results documented in `docs/PERFORMANCE.md`
+7. **Login and roles** *(added after deployment – see change log below)*
+   - Sign in with **Google SSO**, or with demo username/password accounts for reviewers
+   - **HR Manager** can view and change salary data; **HR Viewer** can only view; anyone else who signs in sees "No access"
+   - Google users get a role from an email allowlist; all secrets come from environment variables
+
+## Change log
+- **Login and roles moved into scope.** The original plan left login out for a single-persona prototype. Once the app was deployed on a public URL, salary data – which is sensitive – was readable and editable by anyone with the link, so basic role-based access became a must-have rather than a roadmap item.
 
 ## Key decisions
 - **Salaries stay in local currency; insights are always per country.** Comparing salaries across countries needs exchange rates, which change daily. Mixing currencies would give misleading averages, so cross-country salary comparison is out of scope.
@@ -45,9 +52,9 @@ Replace ACME's Excel-based salary tracking with a web app that lets the HR Manag
 | Charts / dashboards | Tables answer the questions; charts are polish, not core |
 
 ## Prioritised roadmap (next, in order)
-1. **Role-based access** – login (Spring Security + company SSO) with roles such as HR Manager, HR Viewer, Admin. Prerequisite for everything below.
-2. **Approval workflow for salary changes** – a revision above a threshold needs approval by a second role before it takes effect. Depends on roles existing.
-3. **Full audit logging** – who changed which field and when, for every entity. Salary changes are already covered by revision history; this extends it to all fields and needs a known user (roles) to be meaningful.
+1. **Company identity provider** – point SSO at ACME's own identity provider and take roles from directory groups instead of an email allowlist; remove the demo accounts.
+2. **Approval workflow for salary changes** – a revision above a threshold needs approval by a second HR Manager before it takes effect. Roles now exist, so this is unblocked.
+3. **Full audit logging** – who changed which field and when, for every entity. Salary changes are already covered by revision history; with a signed-in user, each entry can now record *who* made the change.
 4. **Excel import/export** – HR's current data lives in Excel, so this eases migration.
 
 ## Non-functional requirements
