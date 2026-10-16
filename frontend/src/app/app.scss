@@ -10,3 +10,20 @@ nav a.active {
   text-decoration: underline;
   text-underline-offset: 6px;
 }
+
+.spacer {
+  flex: 1;
+}
+
+.user {
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.badge {
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  background: rgba(0, 0, 0, 0.08);
+}

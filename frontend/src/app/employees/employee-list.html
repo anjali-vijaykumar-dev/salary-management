@@ -4,7 +4,9 @@
       <h1>Employees</h1>
       <p class="subtitle">{{ total() | number }} employees</p>
     </div>
-    <button mat-flat-button (click)="openCreate()">Add employee</button>
+    @if (auth.canEdit()) {
+      <button mat-flat-button (click)="openCreate()">Add employee</button>
+    }
   </header>
 
   <div class="filters">
@@ -78,8 +80,10 @@
         <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let e" class="actions">
           <button mat-button (click)="openHistory(e)">History</button>
-          <button mat-button (click)="openEdit(e)">Edit</button>
-          <button mat-button (click)="delete(e)">Delete</button>
+          @if (auth.canEdit()) {
+            <button mat-button (click)="openEdit(e)">Edit</button>
+            <button mat-button (click)="delete(e)">Delete</button>
+          }
         </td>
       </ng-container>
 

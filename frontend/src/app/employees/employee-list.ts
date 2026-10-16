@@ -14,6 +14,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subject, catchError, debounceTime, of, switchMap, tap } from 'rxjs';
 import { EmployeeApi } from '../core/employee-api';
 import { InsightsApi } from '../core/insights-api';
+import { AuthService } from '../core/auth';
 import { CountrySalaryStats, Employee, EmployeeQuery } from '../core/api.models';
 import { EmployeeFormDialog } from './employee-form-dialog';
 import { SalaryHistoryDialog } from './salary-history-dialog';
@@ -32,6 +33,7 @@ export class EmployeeList implements OnInit {
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
+  readonly auth = inject(AuthService);
 
   private readonly load$ = new Subject<void>();
   private readonly nameInput$ = new Subject<string>();
