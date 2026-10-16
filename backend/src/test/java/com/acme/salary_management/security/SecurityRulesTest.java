@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -93,5 +94,12 @@ class SecurityRulesTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("hr.viewer"))
                 .andExpect(jsonPath("$.roles[0]").value("HR_VIEWER"));
+    }
+
+    @Test
+    void showsTheSignedOutMessageAfterLogout() throws Exception {
+        mockMvc.perform(get("/login?logout"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("signed out")));
     }
 }
