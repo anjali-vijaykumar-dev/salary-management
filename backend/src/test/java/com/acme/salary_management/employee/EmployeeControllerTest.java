@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -18,10 +19,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(EmployeeController.class)
+@WithMockUser(roles = "HR_MANAGER")
 class EmployeeControllerTest {
 
     private static final EmployeeResponse ASHA = new EmployeeResponse(1L, "Asha Rao", "asha@acme.com",
@@ -93,7 +96,7 @@ class EmployeeControllerTest {
     void createsAnEmployee() throws Exception {
         when(service.create(any())).thenReturn(ASHA);
 
-        mockMvc.perform(post("/api/employees").contentType(MediaType.APPLICATION_JSON).content(VALID_BODY))
+        mockMvc.perform(post("/api/employees").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(VALID_BODY))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/api/employees/1"))
                 .andExpect(jsonPath("$.id").value(1));
@@ -107,7 +110,7 @@ class EmployeeControllerTest {
                  "salary":-5,"hireDate":"2022-04-01"}
                 """;
 
-        mockMvc.perform(post("/api/employees").contentType(MediaType.APPLICATION_JSON).content(invalid))
+        mockMvc.perform(post("/api/employees").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(invalid))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.fieldErrors.fullName").exists())
                 .andExpect(jsonPath("$.fieldErrors.email").exists())
@@ -120,7 +123,7 @@ class EmployeeControllerTest {
     void returns409WhenTheEmailAlreadyExists() throws Exception {
         when(service.create(any())).thenThrow(new DuplicateEmailException("asha@acme.com"));
 
-        mockMvc.perform(post("/api/employees").contentType(MediaType.APPLICATION_JSON).content(VALID_BODY))
+        mockMvc.perform(post("/api/employees").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(VALID_BODY))
                 .andExpect(status().isConflict());
     }
 
@@ -128,14 +131,14 @@ class EmployeeControllerTest {
     void updatesAnEmployee() throws Exception {
         when(service.update(eq(1L), any())).thenReturn(ASHA);
 
-        mockMvc.perform(put("/api/employees/1").contentType(MediaType.APPLICATION_JSON).content(VALID_BODY))
+        mockMvc.perform(put("/api/employees/1").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(VALID_BODY))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.fullName").value("Asha Rao"));
     }
 
     @Test
     void deletesAnEmployee() throws Exception {
-        mockMvc.perform(delete("/api/employees/1")).andExpect(status().isNoContent());
+        mockMvc.perform(delete("/api/employees/1").with(csrf())).andExpect(status().isNoContent());
 
         verify(service).delete(1L);
     }

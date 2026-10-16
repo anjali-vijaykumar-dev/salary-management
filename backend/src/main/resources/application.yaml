@@ -19,6 +19,13 @@ app:
   seed:
     enabled: true
     count: 10000
+  security:
+    demo-manager-password: ${DEMO_MANAGER_PASSWORD:}
+    demo-viewer-password: ${DEMO_VIEWER_PASSWORD:}
+    manager-emails: ${MANAGER_EMAILS:}
+    viewer-emails: ${VIEWER_EMAILS:}
 
 server:
   port: ${PORT:8080}
+  forward-headers-strategy: framework
+
