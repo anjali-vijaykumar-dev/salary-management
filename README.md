@@ -3,7 +3,7 @@
 Web application for ACME's HR Manager to manage salary data for **10,000 employees across 7 countries** and answer questions about how the organisation pays people – replacing spreadsheets.
 
 - **Live app:** https://salary-management-d76k.onrender.com  *(free hosting: the first request after inactivity can take ~1 minute while the server wakes up)*
-- **Video demo:** <VIDEO_URL>
+- **Video demo:** https://drive.google.com/file/d/1KXSOETm1KsjpLsq8ojQkWY5isGST5vQv/view?usp=sharing
 - **Sign in:** with Google, or with the demo accounts below (passwords are shared separately, not stored in this repository)
 
 | Demo account | Role | Can do |
@@ -130,3 +130,5 @@ Details and scaling path: [docs/PERFORMANCE.md](docs/PERFORMANCE.md).
 ## Development approach
 
 Built test-first: most features have a `test:` commit followed by a `feat:` commit – see the git history. How AI tools were used, and what I reviewed or changed, is documented in [AI_USAGE.md](AI_USAGE.md).
+
+
