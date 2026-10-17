@@ -7,4 +7,6 @@ import java.util.List;
 public interface SalaryRevisionRepository extends JpaRepository<SalaryRevision, Long> {
 
     List<SalaryRevision> findByEmployeeIdOrderByIdDesc(Long employeeId);
+
+    void deleteByEmployeeId(Long employeeId);
 }

@@ -1,5 +1,6 @@
 package com.acme.salary_management.salaryhistory;
 
+import com.acme.salary_management.employee.EmployeeDeletedEvent;
 import com.acme.salary_management.employee.SalaryChangedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -24,5 +25,10 @@ public class SalaryRevisionRecorder {
     public void on(SalaryChangedEvent event) {
         repository.save(new SalaryRevision(event.employeeId(), event.oldSalary(), event.newSalary(),
                 event.currency(), event.reason(), Instant.now()));
+    }
+
+    @EventListener
+    public void on(EmployeeDeletedEvent event) {
+        repository.deleteByEmployeeId(event.employeeId());
     }
 }

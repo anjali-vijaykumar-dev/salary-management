@@ -57,6 +57,7 @@ public class EmployeeService {
             throw new EmployeeNotFoundException(id);
         }
         repository.deleteById(id);
+        events.publishEvent(new EmployeeDeletedEvent(id));
     }
 
 
