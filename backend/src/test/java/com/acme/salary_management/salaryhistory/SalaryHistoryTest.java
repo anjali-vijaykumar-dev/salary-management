@@ -71,6 +71,18 @@ class SalaryHistoryTest {
         assertThatThrownBy(() -> history.historyFor(999L)).isInstanceOf(EmployeeNotFoundException.class);
     }
 
+    @Test
+    void aNewEmployeeDoesNotInheritTheHistoryOfADeletedOne() {
+        EmployeeResponse old = employees.create(request("Software Engineer", "6000000", null));
+        employees.update(old.id(), request("Software Engineer", "60000000", "HIKE"));
+        employees.delete(old.id());
+
+        EmployeeResponse kavya = employees.create(new EmployeeRequest("Kavya", "kavya@acme.com", "Software Engineer",
+                "Engineering", "India", "INR", new BigDecimal("3000000"), LocalDate.of(2022, 4, 1), null));
+
+        assertThat(history.historyFor(kavya.id())).isEmpty();
+    }
+
     private EmployeeRequest request(String jobTitle, String salary, String reason) {
         return new EmployeeRequest("Asha Rao", "asha@acme.com", jobTitle, "Engineering", "India", "INR",
                 new BigDecimal(salary), LocalDate.of(2022, 4, 1), reason);
